@@ -57,7 +57,9 @@ document
 
 
 
-document.querySelector('#order-form').addEventListener('submit', evt => {
+document.querySelector('#order-form').addEventListener('submit', orderMelons);
+
+function orderMelons(evt) {
   evt.preventDefault();
 
   const formInputs = {
@@ -73,11 +75,15 @@ document.querySelector('#order-form').addEventListener('submit', evt => {
     },
   })
   .then(response => response.json())
-  .then(responseJson => {
-    document.querySelector('#order-status').innerHTML = responseJson.msg;
-    });
-});
-
+  .then(response => {
+    if (response.code === 'ERROR') {
+      document.querySelector("#order-status").classList.add("order-error");
+      document.querySelector("#order-status").innerHTML = `<p><b>${response.msg}</b></p>`;
+    } else {
+      document.querySelector("#order-status").classList.remove("order-error");
+      document.querySelector("#order-status").innerHTML = `<p>${response.msg}</p>`;
+    }});
+};
 
 
 

@@ -107,7 +107,7 @@ def order_melons():
         result_code = 'ERROR'
         result_text = "You want to buy fewer than 1 melons? Huh?"
 
-    # print(result_code, result_text)
+    #print(result_code, result_text)
 
     return jsonify({'code': result_code, 'msg': result_text})
 
