@@ -36,6 +36,18 @@
     <div id="fortune-text"></div>
 
 
+
+    <h2>Kanye</h2>
+
+    <p>Want a Kanye West Quote?
+      <button id="get-kanye" class="btn btn-primary">I know - who does, right?</button>
+    </p>
+
+    <div id="kanye-text"></div>
+
+
+    
+
     <h2>Weather Service</h2>
 
     <form id="weather-form">
@@ -51,9 +63,11 @@
     <div id="weather-info"></div>
 
 
+
+
     <h2>Order Melons</h2>
 
-    <form id="order-form">
+    <form id="order-form" action='/order-melons.json' method="POST">
       <div class="form-group">
         <label>Quantity
           <input class="form-control" type="number" name="qty" id="qty-field">
@@ -65,23 +79,33 @@
           <select id="melon-type-field" name="melon_type" class="form-control">
             <option>Watermelon</option>
             <option>Crenshaw</option>
+            <option>Honeydew</option>
+            <option>Muskmelon</option>
+            <option>Mushfruit</option>
+            <option>Lychee</option>
+            <option>Yumi</option>
           </select>
-
         </label>
       </div>
 
       <div class="form-group">
         <button type="submit" id="order-form-button" class="btn btn-primary">Order</button>
       </div>
-
     </form>
-
     <div id="order-status"></div>
+
+
+
 
     <h2>Doggies</h2>
     <div id="dog-image">
-      <button id="get-dog-image">Get dog image</button>
+      <button id="get-dog-image">Get a new dog image</button>
     </div>
+
+    <div>
+      <img id="dog-pic-div" src="dog-pic" />
+      </div>
+
 
   </div>
 

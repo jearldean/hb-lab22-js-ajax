@@ -14,14 +14,33 @@ document
   .querySelector("#get-fortune-button")
   .addEventListener("click", showFortune);
 
+
+
+
+// PART 1a: KANYE QUOTE
+
+function kanyeQuote(evt) {
+  fetch('/kanye')
+  .then(response => response.text())
+  .then(status => {
+    document.querySelector('#kanye-text').innerHTML = status;
+  });
+}
+
+document
+  .querySelector("#get-kanye")
+  .addEventListener("click", kanyeQuote);
+
+
+
+
 // PART 2: SHOW WEATHER
 
 function showWeather(evt) {
   evt.preventDefault();
 
-  //const url = "/weather.json";  // Moved the url construction after getting zipcode.
   const zipcode = document.querySelector("#zipcode-field").value;
-  //This worked: http://0.0.0.0:5000/weather.json?zipcode=99507
+  //This worked: http://0.0.0.0:5000/weather.json?zipcode=90210
   const url = `/weather.json?zipcode=${zipcode}`;
 
   fetch(url)
@@ -29,23 +48,22 @@ function showWeather(evt) {
   .then(responseJson => {
     document.querySelector('#weather-info').innerHTML = responseJson.forecast; // We had to unpack the response: responseJson.forecast
   });
-
 }
 
 document
   .querySelector("#weather-form")
   .addEventListener("submit", showWeather);
 
-// PART 3: ORDER MELONS
 
-function orderMelons(evt) {
+
+
+document.querySelector('#order-form').addEventListener('submit', evt => {
   evt.preventDefault();
 
   const formInputs = {
-    code: document.querySelector('#qty-field').value,
-    msg: document.querySelector('#melon-type-field').value,
+    qty: document.querySelector('#qty-field').value,
+    melon_type: document.querySelector('#melon-type-field').value,
   };
-   // order_melons() gives {'code': result_code, 'msg': result_text}
 
   fetch('/order-melons.json', {
     method: 'POST',
@@ -54,18 +72,29 @@ function orderMelons(evt) {
       'Content-Type': 'application/json',
     },
   })
-
-    .then(response => response.json())
-    .then(responseJson => {
-      alert(responseJson.code);  // send response code to .order-error to be colored red.
+  .then(response => response.json())
+  .then(responseJson => {
+    document.querySelector('#order-status').innerHTML = responseJson.msg;
     });
+});
 
-    if (responseJson.code === 'ERROR') {
-      // send response code to .order-error to be colored red. <div id="order-status"></div>
-    }
 
-};
 
-  // TODO: show the result message after your form
 
-document.querySelector("#order-form").addEventListener("submit", orderMelons);
+
+// 4: RANDOM DOG PIC
+
+function dogPic(evt) {
+  fetch('/doggies')
+  .then(response => response.text())
+  .then(status => {
+    document.querySelector('#dog-pic-div').src = status;
+  });
+}
+
+document
+  .querySelector("#get-dog-image")
+  .addEventListener("click", dogPic);
+
+// Seed the page with the first dog picture:
+dogPic()

@@ -6,10 +6,15 @@ the exercise!
 
 
 import random
+import os
+import requests
+import json
 
 from flask import Flask, request, render_template, jsonify
 
 app = Flask(__name__)
+
+API_KEY = os.environ['API_KEY']
 
 FORTUNES = [
     "Tomorrow your code will <b>work properly</b>.",
@@ -41,14 +46,49 @@ def fortune():
 
     return random.choice(FORTUNES)
 
+@app.route('/kanye')
+def kanye():
+
+    url = "https://api.kanye.rest"
+    kanye_says = requests.get(url)
+    kanye_says_json = kanye_says.text
+    kanye_says_dict = json.loads(kanye_says_json)
+    # print(kanye_says_dict)
+    # print(kanye_says_dict["quote"])
+    return kanye_says_dict["quote"]
+
 
 @app.route('/weather.json')
 def weather():
-    """Return a weather-info dictionary for this zipcode."""
+    """Return a weather-info dictionary for this zipcode.
+    
+    Sometimes this can happen:
+    {'Code': 'ServiceUnavailable',
+    'Message': 'The allowed number of requests has been exceeded.',
+    'Reference': '/locations/v1/postalcodes/search?apikey=xxxxxxxxxxxxxx'}
+    """
 
     zipcode = request.args.get('zipcode')
-    weather_info = WEATHER.get(zipcode, DEFAULT_WEATHER)
-    return jsonify(weather_info)
+    url = 'http://dataservice.accuweather.com/locations/v1/postalcodes/search'
+    payload = {'apikey': API_KEY, 'q': zipcode}
+    
+    res = requests.get(url, params=payload)
+    data = res.json()
+    print(data)
+    if data.get('Code') == 'ServiceUnavailable':
+        return jsonify({'forecast': data.get('Message')})
+
+    location_code = data[0]["Key"]
+
+    url2 = f'http://dataservice.accuweather.com/forecasts/v1/daily/1day/{location_code}'
+    payload2 = {'apikey': API_KEY}
+
+    res2 = requests.get(url2, params=payload2)
+    data2 = res2.json()
+    print(data2)
+    forecast = data2["Headline"]["Text"]
+    
+    return jsonify({'forecast': forecast})
 
 
 @app.route('/order-melons.json', methods=['POST'])
@@ -67,7 +107,27 @@ def order_melons():
         result_code = 'ERROR'
         result_text = "You want to buy fewer than 1 melons? Huh?"
 
+    # print(result_code, result_text)
+
     return jsonify({'code': result_code, 'msg': result_text})
+
+
+
+
+
+
+@app.route('/doggies')
+def doggie():
+    """ url sends back data like this:
+    {"message": "https://images.dog.ceo/breeds/appenzeller/n02107908_7443.jpg",
+    "status": "success"}
+    """
+    url = "https://dog.ceo/api/breeds/image/random"
+    received_payload = requests.get(url)
+    received_payload_json = received_payload.text
+    received_payload_dict = json.loads(received_payload_json)
+    # print(received_payload_dict["message"])
+    return received_payload_dict["message"]
 
 
 if __name__ == "__main__":
